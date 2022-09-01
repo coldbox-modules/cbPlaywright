@@ -16,11 +16,31 @@
 		}
 
 		variables.javaSystem = createObject( "java", "java.lang.System" );
-		variables.javaSystem.setProperty( "playwright.cli.dir", expandPath( "/cbPlaywright/lib/driver/#platformDir()#/" ) );
+		variables.javaPaths = createObject( "java", "java.nio.file.Paths" );
+
+		variables.playwrightVersion = fileRead( expandPath( "/playwright.version" ) );
+
+		var driverDir = variables.javaSystem.getEnv( "CBPLAYWRIGHT_DRIVER_DIR" );
+		if ( isNull( driverDir ) ) {
+			driverDir = variables.javaPaths.get(
+				variables.javaSystem.getProperty( "user.home" ),
+				javacast( "String[]", [ ".CommandBox", "cfml", "modules", "commandbox-cbplaywright", "driver" ] )
+			).toString();
+		}
+		if ( right( driverDir, 1 ) != "/" ) {
+			driverDir &= "/";
+		}
+		if ( !directoryExists( driverDir ) ) {
+			throw( message = "Driver directory does not exist: [#driverDir#]", detail = "You may need to install this particular driver version using commandbox-cbplaywright." );
+		}
+		var driverVersion = deserializeJSON( fileRead( driverDir & "package/package.json" ) ).version;
+		if ( variables.playwrightVersion != driverVersion ) {
+			throw( message = "Incompatible driver version. cbPlaywright is using [#variables.playwrightVersion#] while the driver is using [#driverVersion#].  Please update one or the other." );
+		}
+		variables.javaSystem.setProperty( "playwright.cli.dir", driverDir );
 
 		var playwrightOptions = createObject( "java", "com.microsoft.playwright.Playwright$CreateOptions" ).init();
 		variables.playwright = createObject( "java", "com.microsoft.playwright.impl.PlaywrightImpl" ).create( playwrightOptions );
-		variables.javaPaths = createObject( "java", "java.nio.file.Paths" );
 	}
 
 	function afterAll() {

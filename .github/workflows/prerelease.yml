@@ -42,8 +42,8 @@ jobs:
 
       - name: Install Playwright dependencies
         run: |
-          java -cp "lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install-deps
-          java -cp "lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install --with-deps chromium
+          box playwright-cli install-deps
+          box playwright-cli install chromium
 
       - name: Run TestBox Tests
         run: box testbox run

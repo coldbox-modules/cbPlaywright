@@ -20,7 +20,9 @@
     "shortDescription":"CFML integration with TestBox and Playwright",
     "description":"CFML integration with TestBox and Playwright to run tests in actual browsers",
     "type":"modules",
-    "dependencies":{},
+    "dependencies":{
+        "commandbox-cbplaywright": "^1.0.0"
+    },
     "devDependencies":{
         "testbox":"stable"
     },

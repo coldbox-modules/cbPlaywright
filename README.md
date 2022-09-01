@@ -33,21 +33,18 @@ this.mappings[ "/cbPlaywright" ] = rootPath & "/modules/cbPlaywright";
 
 > Note: You can't use the mapping in the `javaSettings` since they are both in the psuedo-constructor.
 
-3. Add a `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` environment variable.
-
-**Playwright won't start in a CFML server without this. (If someone finds a workaround for this, please open a PR.)**
+3. (OPTIONAL) If you have installed CommandBox or commandbox-cbplaywright in a non-standard location, set the `CBPLAYWRIGHT_DRIVER_DIR`
+environment variable to the correct location of the Playwright driver.
 
 ### Playwright CLI
 
-To interact with the Playwright CLI, use the following snippet:
+To interact with the Playwright CLI, use `commandbox-cbplaywright:
 
+```sh
+playwright-cli
+# or
+playwright
 ```
-java -cp "modules/cbPlaywright/lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI
-```
-
-> Replace `linux` with the correct architecture for your OS.
-> Valid values are `linux`, `linux-arm64`, `mac`, or `win32_x64`
-> (In the future, we'll have a cbPlaywright CommandBox module that will make this easier.)
 
 You can see the documentation for the [Playwright Java CLI here](https://playwright.dev/java/docs/cli).
 
@@ -59,16 +56,12 @@ for more information.
 
 Examples:
 
+```sh
+box playwright install chromium
+box playwright install firefox
+box playwright install webkit
+box playwright install msedge
 ```
-java -cp "modules/cbPlaywright/lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install chromium
-java -cp "modules/cbPlaywright/lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install firefox
-java -cp "modules/cbPlaywright/lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install webkit
-java -cp "modules/cbPlaywright/lib/*" -Dplaywright.cli.dir="lib/driver/linux/" com.microsoft.playwright.CLI install msedge
-```
-
-> Replace `linux` with the correct architecture for your OS.
-> Valid values are `linux`, `linux-arm64`, `mac`, or `win32_x64`
-> (In the future, we'll have a cbPlaywright CommandBox module that will make this easier.)
 
 ### Usage
 
