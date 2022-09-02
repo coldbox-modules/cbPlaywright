@@ -18,7 +18,7 @@
 		variables.javaSystem = createObject( "java", "java.lang.System" );
 		variables.javaPaths = createObject( "java", "java.nio.file.Paths" );
 
-		variables.playwrightVersion = fileRead( expandPath( "/playwright.version" ) );
+		variables.playwrightVersion = fileRead( expandPath( "/cbPlaywright/playwright.version" ) );
 
 		var driverDir = variables.javaSystem.getEnv( "CBPLAYWRIGHT_DRIVER_DIR" );
 		if ( isNull( driverDir ) ) {
