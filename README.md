@@ -38,7 +38,7 @@ environment variable to the correct location of the Playwright driver.
 
 ### Playwright CLI
 
-To interact with the Playwright CLI, use `commandbox-cbplaywright:
+To interact with the Playwright CLI, use `commandbox-cbplaywright`:
 
 ```sh
 playwright-cli
