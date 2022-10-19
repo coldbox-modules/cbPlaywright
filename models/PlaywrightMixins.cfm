@@ -35,7 +35,7 @@
 		}
 		var driverVersion = deserializeJSON( fileRead( driverDir & "package/package.json" ) ).version;
 		if ( variables.playwrightVersion != driverVersion ) {
-			throw( message = "Incompatible driver version. cbPlaywright is using [#variables.playwrightVersion#] while the driver is using [#driverVersion#].  Please update one or the other. Hint: CommandBox users can run `cbplaywright driver install #variables.playwrightVersion# --force`" );
+			throw( message = "Incompatible driver version. cbPlaywright is using [#variables.playwrightVersion#] while the driver is using [#driverVersion#].  Please update one or the other. Hint: CommandBox users can run `playwright driver install #variables.playwrightVersion# --force`" );
 		}
 		variables.javaSystem.setProperty( "playwright.cli.dir", driverDir );
 
