@@ -189,7 +189,8 @@
 			arguments.callback = function() {};
 		}
 		var runnable = createDynamicProxy( new Runnable( arguments.callback ), [ "java.lang.Runnable" ] );
-		return arguments.page.waitForNavigation( runnable );
+		var options = createObject( "java", "com.microsoft.playwright.Page$WaitForNavigationOptions" ).init();
+		return arguments.page.waitForNavigation( options, runnable );
 	}
 
 	public any function waitForLoadState( required any page ) {
