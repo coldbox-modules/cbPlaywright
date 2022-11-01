@@ -70,7 +70,10 @@
 
 	public string function route() {
 		var baseURL = CGI.HTTPS == "on" ? "https://" : "http://" & CGI.HTTP_HOST;
-		var pathArray = structValueArray( arguments );
+		var pathArray = [];
+		for ( var currentKey in arguments ){
+			pathArray.append( arguments[currentKey] );
+		}
 		return variables.javaPaths.get( baseURL, javacast( "String[]", pathArray ) ).toString();
 	}
 
