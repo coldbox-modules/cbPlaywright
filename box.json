@@ -1,6 +1,6 @@
 {
     "name":"cbPlaywright",
-    "version":"0.0.0",
+    "version":"0.0.1",
     "author":"Eric Peterson <eric@elpete.com>",
     "location":"forgeboxStorage",
     "homepage":"https://github.com/coldbox-modules/cbPlaywright",
@@ -21,7 +21,7 @@
     "description":"CFML integration with TestBox and Playwright to run tests in actual browsers",
     "type":"modules",
     "dependencies":{
-        "commandbox-cbplaywright": "^1.0.0"
+        "commandbox-cbplaywright":"^1.0.0"
     },
     "devDependencies":{
         "testbox":"stable"
@@ -34,7 +34,7 @@
         "format:check":"cfformat check ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc --verbose",
         "format:watch":"cfformat watch ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc",
         "installDeps":"!mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args=\"install-deps\"",
-        "install:2021": "cfpm install document,feed,zip"
+        "install:2021":"cfpm install document,feed,zip"
     },
     "ignore":[
         "**/.*",
