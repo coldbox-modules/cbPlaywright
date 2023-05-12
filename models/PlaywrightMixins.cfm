@@ -77,6 +77,51 @@
 		return variables.javaPaths.get( baseURL, javacast( "String[]", pathArray ) ).toString();
 	}
 
+	public any function regex( required string pattern, any flags = [] ) {
+		param variables.javaPattern = createObject( "java", "java.util.regex.Pattern" );
+
+		if ( !isArray( arguments.flags ) ) {
+			arguments.flags = listToArray( arguments.flags, "" );
+		}
+
+		var flagBitMask = javacast( "null", "" );
+		for ( var flag in arguments.flags ) {
+			switch( flag ) {
+				case "i": {
+					flagBitMask = isNull( flagBitMask ) ?
+						variables.javaPattern.CASE_INSENSITIVE :
+						bitOr( flagBitMask, variables.javaPattern.CASE_INSENSITIVE );
+					break;
+				}
+				case "m": {
+					flagBitMask = isNull( flagBitMask ) ?
+						variables.javaPattern.MULTILINE :
+						bitOr( flagBitMask, variables.javaPattern.MULTILINE );
+					break;
+				}
+				case "s": {
+					flagBitMask = isNull( flagBitMask ) ?
+						variables.javaPattern.DOTALL :
+						bitOr( flagBitMask, variables.javaPattern.DOTALL );
+					break;
+				}
+				case "u": {
+					flagBitMask = isNull( flagBitMask ) ?
+						variables.javaPattern.UNICODE_CASE :
+						bitOr( flagBitMask, variables.javaPattern.UNICODE_CASE );
+					break;
+				}
+				default: {
+					throw( "Unsupported regex flag: [#flag#]" );
+				}
+			}
+		}
+
+		return isNull( flagBitMask ) ?
+			variables.javaPattern.compile( arguments.pattern ) :
+			variables.javaPattern.compile( arguments.pattern, flagBitMask );
+	}
+
 	public any function navigate( required any page, required string path ) {
 		var navigateOptions = createObject( "java", "com.microsoft.playwright.Page$NavigateOptions" );
 		return arguments.page.navigate( javacast( "string", arguments.path ), navigateOptions );
@@ -87,9 +132,84 @@
 		return arguments.page.locator( arguments.selector, options );
 	}
 
+	public any function getByRole(
+		required any page,
+		required any role,
+		struct options = {},
+		boolean checked,
+		boolean disabled,
+		boolean exact,
+		boolean expanded,
+		boolean includeHidden,
+		numeric level,
+		string name,
+		boolean pressed,
+		boolean selected
+	) {
+		var getByRoleOptions = createObject( "java", "com.microsoft.playwright.Page$GetByRoleOptions" ).init();
+		if ( structKeyExists( arguments.options, "checked" ) ) {
+			getByRoleOptions.setChecked( javacast( "boolean", arguments.options.checked ) );
+		}
+		if ( structKeyExists( arguments.options, "disabled" ) ) {
+			getByRoleOptions.setDisabled( javacast( "boolean", arguments.options.disabled ) );
+		}
+		if ( structKeyExists( arguments.options, "exact" ) ) {
+			getByRoleOptions.setExact( javacast( "boolean", arguments.options.exact ) );
+		}
+		if ( structKeyExists( arguments.options, "expanded" ) ) {
+			getByRoleOptions.setExpanded( javacast( "boolean", arguments.options.expanded ) );
+		}
+		if ( structKeyExists( arguments.options, "includeHidden" ) ) {
+			getByRoleOptions.setIncludeHidden( javacast( "boolean", arguments.options.includeHidden ) );
+		}
+		if ( structKeyExists( arguments.options, "level" ) ) {
+			getByRoleOptions.setLevel( javacast( "int", arguments.options.level ) );
+		}
+		if ( structKeyExists( arguments.options, "name" ) ) {
+			getByRoleOptions.setName( javacast( "string", arguments.options.name ) );
+		}
+		if ( structKeyExists( arguments.options, "pressed" ) ) {
+			getByRoleOptions.setPressed( javacast( "boolean", arguments.options.pressed ) );
+		}
+		if ( structKeyExists( arguments.options, "selected" ) ) {
+			getByRoleOptions.setSelected( javacast( "boolean", arguments.options.selected ) );
+		}
+
+		return arguments.page.getByRole(
+			createObject( "java", "com.microsoft.playwright.options.AriaRole" )[ ucase( arguments.role ) ],
+			getByRoleOptions
+		);
+	}
+
+	public any function getByLabel( required any page, required any text, boolean exact = false ) {
+		var options = createObject( "java", "com.microsoft.playwright.Page$GetByLabelOptions" ).init();
+		options.setExact( javacast( "boolean", arguments.exact ) );
+		return page.getByLabel( arguments.text, options );
+	}
+
 	public any function click( required any element ) {
 		var options = createObject( "java", "com.microsoft.playwright.Locator$ClickOptions" ).init();
 		return arguments.element.click( options );
+	}
+
+	public any function check( required any element, struct options = {} ) {
+		var checkOptions = createObject( "java", "com.microsoft.playwright.Locator$CheckOptions" ).init();
+		if ( structKeyExists( arguments.options, "force" ) ) {
+			checkOptions.setForce( javacast( "boolean", arguments.options.force ) );
+		}
+		if ( structKeyExists( arguments.options, "noWaitAfter" ) ) {
+			checkOptions.setNoWaitAfter( javacast( "boolean", arguments.options.noWaitAfter ) );
+		}
+		if ( structKeyExists( arguments.options, "position" ) ) {
+			checkOptions.setPosition( javacast( "double", arguments.options.position.x ), javacast( "double", arguments.options.position.y ) );
+		}
+		if ( structKeyExists( arguments.options, "timeout" ) ) {
+			checkOptions.setTimeout( javacast( "double", arguments.options.timeout ) );
+		}
+		if ( structKeyExists( arguments.options, "trial" ) ) {
+			checkOptions.setTrial( javacast( "boolean", arguments.options.trial ) );
+		}
+		return arguments.element.check( checkOptions );
 	}
 
 	public any function fill( required any element, required string value ) {
@@ -173,10 +293,14 @@
 		arguments.startOptions.sources = false;
 		arguments.context.tracing().start( generateStartOptions( arguments.startOptions ) );
 
-		arguments.callback();
-
-		arguments.stopOptions.path = arguments.path;
-		arguments.context.tracing().stop( generateStopOptions( arguments.stopOptions ) );
+		try {
+			arguments.callback( arguments.context );
+		} catch ( any e ) {
+			rethrow;
+		} finally {
+			arguments.stopOptions.path = arguments.path;
+			arguments.context.tracing().stop( generateStopOptions( arguments.stopOptions ) );
+		}
 	}
 
 	public any function waitForPopup( required any page, function callback ) {
@@ -202,8 +326,11 @@
 		return arguments.page.waitForLoadState( loadState, options );
 	}
 
-	public any function waitForUrl( required any page, required string url ) {
+	public any function waitForUrl( required any page, required string url, numeric timeout ) {
 		var options = createObject( "java", "com.microsoft.playwright.Page$WaitForURLOptions" ).init();
+		if ( !isNull( arguments.timeout ) ) {
+			options.setTimeout( javacast( "double", arguments.timeout ) );
+		}
 		return arguments.page.waitForUrl( arguments.url, options );
 	}
 

@@ -130,6 +130,24 @@ route( "/users", userId, "edit" );
 // http://127.0.0.1:51423/users/42/edit
 ```
 
+#### regex
+
+Converts a string an optional flags into a Java Regex Pattern
+
+| Name  | Type   | Required | Default | Description                                                                                                                                                                      |
+| ----- | ------ | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| pattern | string | true    | | The regex pattern to search for.  Don't include any surrounding slashes `/` or flags. |
+| flags | String OR [String] | false | `null` | Any flags for the regex.  Supported flags are `i` (case insensitive), `m` (multiline), `s` (dotall), and `u` (unicode). |
+
+Example:
+
+```cfc
+var browser = launchBrowser( variables.playwright.webkit() );
+var page = browser.newPage();
+navigate( page, "https://coldbox.org" );
+click( getByRole( coldbox, "link", { "name": regex( "CFCASTS", "i" ), "exact": true } ) );
+```
+
 #### navigate
 
 Navigates a [Page](https://playwright.dev/java/docs/api/class-page) to a URL.
@@ -167,6 +185,107 @@ navigate( page, "https://google.com" );
 waitForLoadState( page );
 expect( page.title() ).toBe( "Google" );
 var searchBox = locateElement( page, '[aria-label="Search"]' );
+```
+
+#### getByRole
+https://playwright.dev/docs/locators#locate-by-role
+https://playwright.dev/java/docs/api/class-page#page-get-by-role
+
+Allows locating elements by their ARIA role, ARIA attributes and accessible name.
+
+Consider the following DOM structure.
+
+```html
+<h3>Sign up</h3>
+<label>
+  <input type="checkbox" /> Subscribe
+</label>
+<br/>
+<button>Submit</button>
+```
+
+You can locate each element by it's implicit role:
+```cfc
+expect( getByRole( page, "heading", { name: "Sign up" } ).isVisible() ).toBeTrue();
+check( getByRole( page, "checkbox", { name: "Subscribe" } ) );
+click( getByRole( page, "button", { name: regex( "submit", "i" ) } ) );
+```
+
+| Name | Type | Required | Default | Description |
+| ----- | ------ | -------- | ------- | |
+| page | com.microsoft.playwright.Page | true | | A Playwright page in which to find the selector. |
+| role | string | true | | One of the valid Aria roles |
+| options | struct | false | `{}` | Additional options to further refine the selection. Valid options are: `checked, disabled, exact, expanded, includeHidden, level, name, pressed, selected` |
+
+Valid Aria roles include:
+```
+role enum AriaRole { ALERT, ALERTDIALOG, APPLICATION, ARTICLE, BANNER, BLOCKQUOTE, BUTTON, CAPTION, CELL, CHECKBOX, CODE, COLUMNHEADER, COMBOBOX, COMPLEMENTARY, CONTENTINFO, DEFINITION, DELETION, DIALOG, DIRECTORY, DOCUMENT, EMPHASIS, FEED, FIGURE, FORM, GENERIC, GRID, GRIDCELL, GROUP, HEADING, IMG, INSERTION, LINK, LIST, LISTBOX, LISTITEM, LOG, MAIN, MARQUEE, MATH, METER, MENU, MENUBAR, MENUITEM, MENUITEMCHECKBOX, MENUITEMRADIO, NAVIGATION, NONE, NOTE, OPTION, PARAGRAPH, PRESENTATION, PROGRESSBAR, RADIO, RADIOGROUP, REGION, ROW, ROWGROUP, ROWHEADER, SCROLLBAR, SEARCH, SEARCHBOX, SEPARATOR, SLIDER, SPINBUTTON, STATUS, STRONG, SUBSCRIPT, SUPERSCRIPT, SWITCH, TAB, TABLE, TABLIST, TABPANEL, TERM, TEXTBOX, TIME, TIMER, TOOLBAR, TOOLTIP, TREE, TREEGRID, TREEITEM }
+```
+
+Example:
+
+```cfc
+var browser = launchBrowser( variables.playwright.chromium() );
+var page = browser.newPage();
+navigate( page, "https://coldbox.org" );
+waitForLoadState( page );
+var cfcastsLink = getByRole( page, "link", { "name": regex( "CFCASTS", "i" ), "exact": true } );
+click( cfcastsLink );
+```
+
+#### getByLabel
+https://playwright.dev/docs/locators#locate-by-label
+https://playwright.dev/java/docs/api/class-page#page-get-by-label
+
+Allows locating input elements by the text of the associated <label> or aria-labelledby element, or by the aria-label attribute.
+
+For example, this method will find inputs by label "Username" and "Password" in the following DOM:
+
+```html
+<input aria-label="Username">
+<label for="password-input">Password:</label>
+<input id="password-input">
+```
+
+```cfc
+fill( getByLabel( page, "Username" ), "john" );
+fill( getByLabel( page, "Password" ), "secret" );
+```
+
+| Name | Type | Required | Default | Description |
+| ----- | ------ | -------- | ------- | |
+| page | com.microsoft.playwright.Page | true | | A Playwright page in which to find the selector. |
+| text | string | true | | Text to locate the element. |
+| exact | boolean | false | `false` | Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace. |
+
+Example:
+
+```cfc
+var browser = launchBrowser( variables.playwright.chromium() );
+var page = browser.newPage();
+navigate( page, "https://google.com" );
+waitForLoadState( page );
+var searchField = getByLabel( page, "Search" );
+fill( searchField, "coldbox" );
+```
+
+#### check
+
+Checks an [Locator](https://playwright.dev/java/docs/api/class-locator).
+
+| Name | Type | Required | Default | Description |
+| ----- | ------ | -------- | ------- | |
+| locator | com.microsoft.playwright.Locator | true | | A Playwright Locator. You usually retrieve this from a `locateElement` or `getBy*` call. |
+| options | struct | false | `{}` | Options for the check event. Valid options are: `force` (boolean), `noWaitAfter` (boolean), `position` ( { x: double, y: double } ), `timeout` (double), and `trial` (boolean) |
+
+Example:
+
+```cfc
+var browser = launchBrowser( variables.playwright.chromium() );
+var page = browser.newPage();
+navigate( page, "https://cfcasts.com/login" );
+waitForLoadState( page );
+check( getByLabel( "Remember Me" ) );
 ```
 
 #### click
