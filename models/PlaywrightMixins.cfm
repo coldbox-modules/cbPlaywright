@@ -69,12 +69,50 @@
 	}
 
 	public string function route() {
-		var baseURL = CGI.HTTPS == "on" ? "https://" : "http://" & CGI.HTTP_HOST;
-		var pathArray = [];
+		var baseURL = CGI.HTTPS == "on" ? "https://" : "http://" & CGI.HTTP_HOST & "/";
+
+		var pathSegments = [];
 		for ( var currentKey in arguments ){
-			pathArray.append( arguments[currentKey] );
+			arrayAppend( pathSegments, stripSurroundingSlashes( arguments[ currentKey ] ) );
 		}
-		return variables.javaPaths.get( baseURL, javacast( "String[]", pathArray ) ).toString();
+
+		return baseURL & pathSegments.filter( ( segment ) => len( segment ) > 0 ).toList( "/" );
+	}
+
+	public string function stripLeadingSlash( required string str ) {
+		if ( len( arguments.str ) <= 0 ) {
+			return arguments.str;
+		}
+
+		if ( arguments.str == "/" ) {
+			return "";
+		}
+
+		if ( left( str, 1 ) == "/" ) {
+			return mid( arguments.str, 2, len( arguments.str ) - 1 );
+		}
+
+		return arguments.str;
+	}
+
+	public string function stripTrailingSlash( required string str ) {
+		if ( len( arguments.str ) <= 0 ) {
+			return arguments.str;
+		}
+
+		if ( arguments.str == "/" ) {
+			return "";
+		}
+
+		if ( right( str, 1 ) == "/" ) {
+			return left( arguments.str, len( arguments.str ) - 1 );
+		}
+
+		return arguments.str;
+	}
+
+	public string function stripSurroundingSlashes( required string str ) {
+		return stripLeadingSlash( stripTrailingSlash( arguments.str ) );
 	}
 
 	public any function regex( required string pattern, any flags = [] ) {
