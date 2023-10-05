@@ -414,6 +414,24 @@
 		return stopOptions;
 	}
 
+	public any function newContext(
+		required any browser,
+		struct options = {}
+	) {
+		return arguments.browser.newContext( generateNewContextOptions( arguments.options ) );
+	}
+
+	public any function storeStorageState(
+		required any context,
+		required string path
+	) {
+		return arguments.context.storageState(
+			createObject( "java", "com.microsoft.playwright.BrowserContext$StorageStateOptions" )
+				.init()
+				.setPath( toPath( arguments.path ) )
+		);
+	}
+
 	public any function newRecordedContextForBrowser(
 		required any browser,
 		required string directory,
@@ -446,6 +464,10 @@
 						javacast( "int", optionValue.width ),
 						javacast( "int", optionValue.height )
 					);
+					break;
+
+				case "storageStatePath":
+					newContextOptions.setStorageStatePath( toPath( optionValue ) );
 					break;
 			}
 		}
