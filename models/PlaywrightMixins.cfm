@@ -69,7 +69,7 @@
 	}
 
 	public string function route() {
-		var baseURL = CGI.HTTPS == "on" ? "https://" : "http://" & CGI.HTTP_HOST & "/";
+		var baseURL = ( CGI.HTTPS == "on" ? "https://" : "http://" ) & CGI.HTTP_HOST & "/";
 
 		var pathSegments = [];
 		for ( var currentKey in arguments ){
