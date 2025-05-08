@@ -48,7 +48,7 @@ jobs:
 
       - name: Install Playwright dependencies
         run: |
-          box cbplaywright driver install 1.33.0 --force
+          box cbplaywright driver install 1.52.0 --force
           box playwright-cli install-deps
           box playwright-cli install chromium
 
