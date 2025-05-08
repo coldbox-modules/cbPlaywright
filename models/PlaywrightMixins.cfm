@@ -10,6 +10,8 @@
 			// adobe
 			} else if ( ( e.message contains "The beforeAll method was not found." ) ) {
 				// do nothing
+			} else if ( ( e.message contains "The method beforeAll does not exist." ) ) {
+				// do nothing
 			} else {
 				rethrow;
 			}
