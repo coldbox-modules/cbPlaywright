@@ -64,6 +64,8 @@
 			// adobe
 			} else if ( ( e.message contains "The afterAll method was not found." ) ) {
 				// do nothing
+			} else if ( ( e.message contains "The method afterAll does not exist." ) ) {
+				// do nothing
 			} else {
 				rethrow;
 			}

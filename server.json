@@ -1,10 +1,15 @@
 {
     "app":{
-        "cfengine":"adobe@2018"
+        "cfengine":"lucee@5"
     },
     "web":{
         "http":{
             "port":"8500"
         }
+    },
+    "jvm": {
+        "args": [
+            "--add-opens=java.base/sun.nio.fs=ALL-UNNAMED"
+        ]
     }
 }

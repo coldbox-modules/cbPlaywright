@@ -8,7 +8,7 @@ component extends="cbPlaywright.models.PlaywrightTestCase" {
 				}
 				directoryCreate( expandPath( "/tests/results" ) );
 
-				var browser = launchBrowser( variables.playwright.chromium() );
+				var browser = launchInteractiveBrowser( variables.playwright.chromium() );
 				newRecordedContextForBrowser(
 					browser,
 					"/tests/results/videos",
@@ -18,19 +18,19 @@ component extends="cbPlaywright.models.PlaywrightTestCase" {
 							"/tests/results/trace.zip",
 							function() {
 								var page = context.newPage();
-								navigate( page, "https://google.com" );
+								navigate( page, "https://duckduckgo.com" );
 								waitForLoadState( page );
-								expect( page.title() ).toBe( "Google" );
-								var searchBox = locateElement( page, '[aria-label="Search"]' );
+								expect( page.title() ).toInclude( "DuckDuckGo" );
+								var searchBox = locateElement( page, '[name="q"]' );
 								click( searchBox );
 								fill( searchBox, "playwright" );
 								press( searchBox, "Enter" );
-								expect( page.url() ).toInclude( "https://www.google.com/search?q=playwright" );
+								expect( page.url() ).toInclude( "q=playwright" );
 								click(
-									locateElement(
-										page,
-										"text=Playwright: Fast and reliable end-to-end testing for modern ..."
-									)
+									getByRole( page, "link", {
+										"name": "Fast and reliable end-to-end testing for modern web apps | Playwright",
+										"exact": true
+									} )
 								);
 								waitForUrl( page, "https://playwright.dev/" );
 								screenshotPage( page, "/tests/results/playwright.png" );
