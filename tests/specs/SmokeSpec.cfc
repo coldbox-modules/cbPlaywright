@@ -18,21 +18,18 @@ component extends="cbPlaywright.models.PlaywrightTestCase" {
 							"/tests/results/trace.zip",
 							function() {
 								var page = context.newPage();
-								navigate( page, "https://duckduckgo.com" );
+								navigate( page, "https://example.com/" );
 								waitForLoadState( page );
-								expect( page.title() ).toInclude( "DuckDuckGo" );
-								var searchBox = locateElement( page, '[name="q"]' );
-								click( searchBox );
-								fill( searchBox, "playwright" );
-								press( searchBox, "Enter" );
-								expect( page.url() ).toInclude( "q=playwright" );
+								expect( page.title() ).toInclude( "Example Domain" );
+								var header = locateElement( page, 'h1' );
+								expect( header.innerText() ).toInclude( "Example Domain" );
 								click(
 									getByRole( page, "link", {
-										"name": "Fast and reliable end-to-end testing for modern web apps | Playwright",
+										"name": "More information...",
 										"exact": true
 									} )
 								);
-								waitForUrl( page, "https://playwright.dev/" );
+								waitForUrl( page, "https://www.iana.org/help/example-domains" );
 								screenshotPage( page, "/tests/results/playwright.png" );
 							}
 						);
