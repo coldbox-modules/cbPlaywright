@@ -8,7 +8,7 @@ component extends="cbPlaywright.models.PlaywrightTestCase" {
 				}
 				directoryCreate( expandPath( "/tests/results" ) );
 
-				var browser = launchInteractiveBrowser( variables.playwright.chromium() );
+				var browser = launchBrowser( variables.playwright.chromium() );
 				newRecordedContextForBrowser(
 					browser,
 					"/tests/results/videos",
