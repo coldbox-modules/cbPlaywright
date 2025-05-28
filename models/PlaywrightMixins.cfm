@@ -23,11 +23,10 @@
 		variables.playwrightVersion = fileRead( expandPath( "/cbPlaywright/playwright.version" ) );
 
 		var driverDir = variables.javaSystem.getEnv( "CBPLAYWRIGHT_DRIVER_DIR" );
+		var userHome = variables.javaSystem.getProperty( "user.home" );
+		var fileSeparator = variables.javaSystem.getProperty( "file.separator" );
 		if ( isNull( driverDir ) ) {
-			driverDir = variables.javaPaths.get(
-				variables.javaSystem.getProperty( "user.home" ),
-				javacast( "String[]", [ ".CommandBox", "cfml", "modules", "commandbox-cbplaywright", "driver" ] )
-			).toString();
+			driverDir = userHome & fileSeparator & ".CommandBox" & fileSeparator & "cfml" & fileSeparator & "modules" & fileSeparator & "commandbox-cbplaywright" & fileSeparator & "driver";
 		}
 		if ( right( driverDir, 1 ) != "/" ) {
 			driverDir &= "/";
